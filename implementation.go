@@ -12,6 +12,9 @@ import (
 func CalculatePrefix(expression string) (int, error) {
 	tokens := strings.Fields(expression)
 	var stack []int
+	if strings.TrimSpace(expression) == "" {
+		return 0, fmt.Errorf("empty expression")
+	}
 
 	for i := len(tokens) - 1; i >= 0; i-- {
 		token := tokens[i]
@@ -47,7 +50,6 @@ func CalculatePrefix(expression string) (int, error) {
 				return 0, fmt.Errorf("invalid token: %s", token)
 			}
 			stack = append(stack, num)
-			fmt.Print(stack)
 		}
 	}
 
