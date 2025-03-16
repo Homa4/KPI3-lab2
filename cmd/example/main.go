@@ -3,7 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	lab2 "github.com/roman-mazur/architecture-lab-2"
+
+	lab2 "github.com/Homa4/KPI3-lab2"
 )
 
 var (
@@ -22,6 +23,10 @@ func main() {
 	//       }
 	//       err := handler.Compute()
 
-	res, _ := lab2.PrefixToPostfix("+ 2 2")
-	fmt.Println(res)
+	res, error := lab2.CalculatePrefix("2 2 +")
+	if error != nil {
+		fmt.Println(error)
+	} else {
+		fmt.Println(res)
+	}
 }
