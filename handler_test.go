@@ -57,7 +57,7 @@ func TestComputeHandler_EmptyExpression(t *testing.T) {
 
 	err := handler.Compute()
 
-	if err != nil {
+	if err == nil {
 		t.Fatalf("expected error, but got nil")
 	}
 
