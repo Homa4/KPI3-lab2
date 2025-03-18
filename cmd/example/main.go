@@ -3,30 +3,59 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
+	"strings"
 
 	lab2 "github.com/Homa4/KPI3-lab2"
 )
 
 var (
 	inputExpression = flag.String("e", "", "Expression to compute")
-	// TODO: Add other flags support for input and output configuration.
+	inputFile       = flag.String("f", "", "File with expression to compute")
+	outputFile      = flag.String("o", "", "File to write output (optional)")
 )
 
 func main() {
 	flag.Parse()
 
-	// TODO: Change this to accept input from the command line arguments as described in the task and
-	//       output the results using the ComputeHandler instance.
-	//       handler := &lab2.ComputeHandler{
-	//           Input: {construct io.Reader according the command line parameters},
-	//           Output: {construct io.Writer according the command line parameters},
-	//       }
-	//       err := handler.Compute()
+	if (*inputExpression != "" && *inputFile != "") || (*inputExpression == "" && *inputFile == "") {
+		fmt.Fprintln(os.Stderr, "Error: use either -e or -f, not both")
+		flag.Usage()
+		os.Exit(1)
+	}
 
-	res, error := lab2.CalculatePrefix("2 2 +")
-	if error != nil {
-		fmt.Println(error)
+	var reader io.Reader
+	if *inputExpression != "" {
+		reader = strings.NewReader(*inputExpression)
 	} else {
-		fmt.Println(res)
+		file, err := os.Open(*inputFile)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error opening file:", err)
+			os.Exit(1)
+		}
+		defer file.Close()
+		reader = file
+	}
+
+	var writer io.Writer = os.Stdout
+	if *outputFile != "" {
+		file, err := os.OpenFile(*outputFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error opening output file:", err)
+			os.Exit(1)
+		}
+		defer file.Close()
+		writer = file
+	}
+
+	handler := &lab2.ComputeHandler{
+		Input:  reader,
+		Output: writer,
+	}
+
+	if err := handler.Compute(); err != nil {
+		fmt.Fprintln(os.Stderr, "Error in calculating result:", err)
+		os.Exit(1)
 	}
 }

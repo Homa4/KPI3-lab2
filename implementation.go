@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// TODO: document this function.
 // PrefixToPostfix converts
 func CalculatePrefix(expression string) (int, error) {
 	tokens := strings.Fields(expression)
